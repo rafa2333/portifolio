@@ -1,0 +1,801 @@
+import "./App.css";
+import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
+import {
+  Menu,
+  X,
+  Code2,
+  Database,
+  Globe,
+  Cpu,
+  Layers,
+  Terminal,
+  Github,
+  Linkedin,
+  Mail,
+  ChevronRight,
+  Smartphone,
+  Coffee,
+  GitBranch,
+  Server,
+  FileCode2,
+  Braces,
+  ArrowUpRight,
+} from "lucide-react";
+import { projects } from "./projects";
+import ProjectDetail from "./pages/ProjectDetail";
+
+const GITHUB = "https://github.com/rafa2333";
+const LINKEDIN = "https://www.linkedin.com/in/rafael-lopes-bonfim-470817308";
+
+const skillBlocks = [
+  {
+    title: "Desenvolvimento Web",
+    subsections: [
+      {
+        label: "Front-end",
+        skills: [
+          { name: "React", icon: <Layers size={16} /> },
+          { name: "HTML5 & CSS3", icon: <Globe size={16} /> },
+          { name: "JavaScript", icon: <Code2 size={16} /> },
+          { name: "Tailwind CSS", icon: <Braces size={16} /> },
+        ],
+      },
+      {
+        label: "Back-end",
+        skills: [
+          { name: "Node.js", icon: <Terminal size={16} /> },
+          { name: "Express.js", icon: <Server size={16} /> },
+          { name: "REST APIs", icon: <Cpu size={16} /> },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Desenvolvimento de Software",
+    subsections: [
+      {
+        label: null,
+        skills: [
+          { name: "Python", icon: <FileCode2 size={16} /> },
+          { name: "Java", icon: <Coffee size={16} /> },
+          { name: "Kotlin", icon: <Smartphone size={16} /> },
+          { name: "C#", icon: <FileCode2 size={16} /> },
+        ],
+      },
+    ],
+  },
+  {
+    title: "Gerais",
+    subsections: [
+      {
+        label: null,
+        skills: [
+          { name: "MySQL", icon: <Database size={16} /> },
+          { name: "MongoDB", icon: <Database size={16} /> },
+          { name: "Git & GitHub", icon: <GitBranch size={16} /> },
+        ],
+      },
+    ],
+  },
+];
+
+function SkillTag({ icon, name }) {
+  return (
+    <div className="flex items-center gap-2 bg-purple-950/40 border border-purple-800/30 rounded-xl px-4 py-2 hover:border-purple-500/50 transition-colors">
+      <span className="text-purple-500">{icon}</span>
+      <span className="text-sm font-medium text-purple-200">{name}</span>
+    </div>
+  );
+}
+
+function ProjectCard({ id, title, shortDescription, tags }) {
+  const navigate = useNavigate();
+
+  return (
+    <div className="flex-1 min-w-70 bg-purple-950/10 border border-purple-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-purple-600/40 transition-all hover:-translate-y-1 flex flex-col gap-4">
+      <div className="flex items-start justify-between gap-2">
+        <h3 className="text-lg font-bold text-purple-100">{title}</h3>
+        <div className="flex gap-2 shrink-0">
+          {/* Botão ver detalhes */}
+          <button
+            onClick={() => navigate(`/projeto/${id}`)}
+            title="Ver detalhes"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <ArrowUpRight size={18} />
+          </button>
+        </div>
+      </div>
+      <p className="text-purple-300/60 text-sm leading-relaxed flex-1">
+        {shortDescription}
+      </p>
+      <div className="flex flex-wrap gap-2 mt-auto">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className="text-xs px-3 py-1 rounded-full bg-purple-900/40 text-purple-400 border border-purple-800/30"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let blob1X = mouseX,
+      blob1Y = mouseY;
+    let blob2X = mouseX,
+      blob2Y = mouseY;
+    let animFrame;
+
+    const onMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+    };
+
+    const animate = () => {
+      // blob1 segue rápido
+      blob1X += (mouseX - blob1X) * 0.08;
+      blob1Y += (mouseY - blob1Y) * 0.08;
+
+      // blob2 segue mais devagar (efeito de lag)
+      blob2X += (mouseX - blob2X) * 0.04;
+      blob2Y += (mouseY - blob2Y) * 0.04;
+
+      const b1 = document.getElementById("blob1");
+      const b2 = document.getElementById("blob2");
+
+      if (b1) {
+        b1.style.left = `${blob1X}px`;
+        b1.style.top = `${blob1Y}px`;
+      }
+      if (b2) {
+        b2.style.left = `${blob2X}px`;
+        b2.style.top = `${blob2Y}px`;
+      }
+
+      animFrame = requestAnimationFrame(animate);
+    };
+
+    window.addEventListener("mousemove", onMouseMove);
+    animFrame = requestAnimationFrame(animate);
+
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove);
+      cancelAnimationFrame(animFrame);
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  return (
+    <div className="min-h-screen bg-[#08060f] text-purple-100 overflow-x-hidden relative">
+      <div
+        id="blob1"
+        className="fixed w-40 h-40 rounded-full bg-purple-700 opacity-15 blur-3xl pointer-events-none z-0 transition-none"
+        style={{ transform: "translate(-50%, -50%)", top: "50%", left: "50%" }}
+      />
+      <div
+        id="blob2"
+        className="fixed w-40 h-40 rounded-full bg-violet-800 opacity-10 blur-3xl pointer-events-none z-0 transition-none"
+        style={{ transform: "translate(-50%, -50%)", top: "50%", left: "50%" }}
+      />
+
+      {/* ── DECORAÇÕES FLUTUANTES ── */}
+
+      {/* Losangos */}
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          top: "12%",
+          left: "8%",
+          animation: "floatA 7s ease-in-out infinite",
+        }}
+      >
+        <div
+          style={{
+            width: 10,
+            height: 10,
+            background: "rgba(168,85,247,0.25)",
+            transform: "rotate(45deg)",
+          }}
+        />
+      </div>
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          top: "35%",
+          right: "6%",
+          animation: "floatB 9s ease-in-out infinite",
+        }}
+      >
+        <div
+          style={{
+            width: 7,
+            height: 7,
+            background: "rgba(139,92,246,0.2)",
+            transform: "rotate(45deg)",
+          }}
+        />
+      </div>
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          bottom: "28%",
+          left: "5%",
+          animation: "floatA 11s ease-in-out infinite 1s",
+        }}
+      >
+        <div
+          style={{
+            width: 12,
+            height: 12,
+            background: "rgba(168,85,247,0.15)",
+            transform: "rotate(45deg)",
+          }}
+        />
+      </div>
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          bottom: "15%",
+          right: "10%",
+          animation: "floatB 8s ease-in-out infinite 2s",
+        }}
+      >
+        <div
+          style={{
+            width: 8,
+            height: 8,
+            background: "rgba(124,58,237,0.25)",
+            transform: "rotate(45deg)",
+          }}
+        />
+      </div>
+
+      {/* Círculos pequenos piscando */}
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 5,
+          height: 5,
+          background: "rgba(192,132,252,0.4)",
+          top: "22%",
+          left: "15%",
+          animation: "twinkle 4s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 4,
+          height: 4,
+          background: "rgba(168,85,247,0.35)",
+          top: "60%",
+          right: "14%",
+          animation: "twinkle 5s ease-in-out infinite 1s",
+        }}
+      />
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 6,
+          height: 6,
+          background: "rgba(139,92,246,0.3)",
+          top: "78%",
+          left: "20%",
+          animation: "twinkle 6s ease-in-out infinite 0.5s",
+        }}
+      />
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 3,
+          height: 3,
+          background: "rgba(192,132,252,0.45)",
+          top: "45%",
+          left: "3%",
+          animation: "twinkle 3.5s ease-in-out infinite 2s",
+        }}
+      />
+
+      {/* Linhas diagonais */}
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          top: "18%",
+          right: "12%",
+          animation: "floatC 10s ease-in-out infinite",
+        }}
+      >
+        <div
+          style={{
+            width: 40,
+            height: 1,
+            background:
+              "linear-gradient(90deg, transparent, rgba(168,85,247,0.3), transparent)",
+            transform: "rotate(-35deg)",
+          }}
+        />
+      </div>
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          bottom: "35%",
+          left: "7%",
+          animation: "floatC 12s ease-in-out infinite 3s",
+        }}
+      >
+        <div
+          style={{
+            width: 30,
+            height: 1,
+            background:
+              "linear-gradient(90deg, transparent, rgba(139,92,246,0.25), transparent)",
+            transform: "rotate(25deg)",
+          }}
+        />
+      </div>
+
+      {/* Cruz/Plus pequeno */}
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          top: "55%",
+          left: "10%",
+          animation: "drift 13s ease-in-out infinite",
+        }}
+      >
+        <div
+          style={{ position: "relative", width: 12, height: 12, opacity: 0.2 }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 0,
+              right: 0,
+              height: 1,
+              background: "#a855f7",
+              transform: "translateY(-50%)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: "#a855f7",
+              transform: "translateX(-50%)",
+            }}
+          />
+        </div>
+      </div>
+      <div
+        className="fixed pointer-events-none z-0"
+        style={{
+          top: "30%",
+          right: "18%",
+          animation: "drift 10s ease-in-out infinite 4s",
+        }}
+      >
+        <div
+          style={{ position: "relative", width: 10, height: 10, opacity: 0.15 }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 0,
+              right: 0,
+              height: 1,
+              background: "#c084fc",
+              transform: "translateY(-50%)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: 0,
+              bottom: 0,
+              width: 1,
+              background: "#c084fc",
+              transform: "translateX(-50%)",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Anel vazio flutuante */}
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 32,
+          height: 32,
+          border: "1px solid rgba(168,85,247,0.15)",
+          top: "68%",
+          right: "7%",
+          animation: "floatA 14s ease-in-out infinite 1s",
+        }}
+      />
+      <div
+        className="fixed rounded-full pointer-events-none z-0"
+        style={{
+          width: 20,
+          height: 20,
+          border: "1px solid rgba(139,92,246,0.2)",
+          top: "10%",
+          right: "22%",
+          animation: "floatB 9s ease-in-out infinite 2s",
+        }}
+      />
+
+      {/* OVERLAY */}
+      <div
+        onClick={() => setMenuOpen(false)}
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-99 transition-opacity duration-300 ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}
+      />
+
+      {/* SIDEBAR */}
+      <aside
+        className={`fixed top-0 left-0 h-full w-64 bg-linear-to-b from-[#120a2a] to-[#0d0818] border-r border-purple-900/40 z-100 flex flex-col p-6 gap-8 transition-transform duration-300 ${menuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
+        <button
+          onClick={() => setMenuOpen(false)}
+          className="self-end bg-purple-900/30 border border-purple-700/40 rounded-lg p-2 text-purple-400 hover:bg-purple-800/40 transition-colors"
+        >
+          <X size={18} />
+        </button>
+        <div className="text-xl font-bold text-purple-200 tracking-wide">
+          Menu
+        </div>
+        <nav className="flex flex-col gap-1 flex-1">
+          {["Início", "Sobre", "Competências", "Projetos", "Contato"].map(
+            (item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 text-purple-300/80 hover:text-purple-200 hover:bg-purple-900/30 px-4 py-3 rounded-xl text-sm font-medium transition-all"
+              >
+                <ChevronRight size={13} className="text-purple-500" />
+                {item}
+              </a>
+            ),
+          )}
+        </nav>
+        <div className="flex gap-4 pt-4 border-t border-purple-900/30">
+          <a
+            href={GITHUB}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <Github size={19} />
+          </a>
+          <a
+            href={LINKEDIN}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <Linkedin size={19} />
+          </a>
+          <a
+            href="mailto:rafa.lopes.bonfim@gmail.com"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <Mail size={19} />
+          </a>
+        </div>
+      </aside>
+
+      {/* HEADER */}
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-4 transition-all duration-300 ${scrolled ? "bg-[#08060f]/85 backdrop-blur-xl border-b border-purple-900/30" : "border-b border-transparent"}`}
+      >
+        <button
+          onClick={() => setMenuOpen(true)}
+          className="bg-purple-900/20 border border-purple-700/40 rounded-xl px-3 py-2 text-purple-400 hover:bg-purple-800/30 transition-colors flex items-center"
+        >
+          <Menu size={19} />
+        </button>
+        <div className="absolute left-1/2 -translate-x-1/2 text-lg font-bold text-purple-100 tracking-wide">
+          <span className="text-purple-500">&lt;</span>dev
+          <span className="text-purple-500">&gt;</span>
+        </div>
+        <div className="flex gap-4 items-center">
+          <a
+            href={GITHUB}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <Github size={17} />
+          </a>
+          <a
+            href={LINKEDIN}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-purple-600 hover:text-purple-400 transition-colors"
+          >
+            <Linkedin size={17} />
+          </a>
+        </div>
+      </header>
+
+      {/* HERO */}
+      <section
+        id="início"
+        className="min-h-screen flex flex-col md:flex-row items-center justify-center gap-16 px-10 pt-28 pb-50 relative z-10 max-w-5xl mx-auto"
+      >
+        <div className="flex flex-col items-center md:items-start text-center md:text-left flex-1">
+          <p className="text-xs tracking-[2px] uppercase text-purple-500 font-semibold mb-2">
+            Olá.
+          </p>
+          <h1 className="text-6xl font-extrabold leading-tight mb-3 bg-linear-to-br from-purple-100 via-purple-200 to-purple-500 bg-clip-text text-transparent tracking-tight">
+            Rafael Lopes Bonfim
+          </h1>
+          <h2 className="text-2xl font-light text-purple-400/80 mb-6">
+            Técnico em{" "}
+            <span className="text-purple-400 font-semibold">informática</span>
+          </h2>
+          <div className="flex gap-4 flex-wrap justify-center md:justify-start mb-6">
+            <a
+              href="/RafaelBonfim_PT.pdf"
+              download="CV-Rafael-Lopes-Bonfim.pdf"
+              className="px-8 py-3 bg-linear-to-r from-violet-700 to-purple-500 text-white rounded-xl font-semibold text-sm shadow-lg shadow-purple-900/50 hover:shadow-purple-700/60 transition-shadow inline-flex items-center gap-2"
+            >
+              <FileCode2 size={16} /> Baixar CV
+            </a>
+            <a
+              href="#projetos"
+              className="px-8 py-3 border border-purple-700/50 text-purple-400 rounded-xl font-semibold text-sm hover:bg-purple-900/20 transition-colors"
+            >
+              Ver Projetos
+            </a>
+            <a
+              href="#contato"
+              className="px-8 py-3 border border-purple-700/50 text-purple-400 rounded-xl font-semibold text-sm hover:bg-purple-900/20 transition-colors"
+            >
+              Contato
+            </a>
+          </div>
+        </div>
+
+        <div className="relative shrink-0 flex items-center justify-center">
+          {/* Ondas irradiando para fora */}
+          <div className="absolute w-40 h-40 md:w-63 md:h-63 rounded-full border border-purple-500/30 animate-[wave_3.5s_ease-out_infinite]" />
+          <div className="absolute w-40 h-40 md:w-63 md:h-63 rounded-full border border-purple-500/20 animate-[wave_3.5s_0.8s_ease-out_infinite]" />
+          <div className="absolute w-40 h-40 md:w-63 md:h-63 rounded-full border border-purple-500/10 animate-[wave_3.5s_1.6s_ease-out_infinite]" />
+
+          {/* Brilho atrás da foto */}
+          <div className="absolute w-40 h-40 md:w-63 md:h-63 rounded-full bg-purple-600/20 blur-2xl" />
+
+          {/* Foto */}
+          <div className="relative w-40 h-40 md:w-63 md:h-63 rounded-full overflow-hidden border-2 border-purple-700/50 shadow-2xl shadow-purple-900/60 z-10">
+            <img
+              src="/rafael.jpeg"
+              alt="Rafael Lopes Bonfim"
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Brilho embaixo */}
+          <div className="absolute -bottom-4 w-32 h-6 bg-purple-600/30 blur-xl rounded-full" />
+        </div>
+
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2">
+          <div className="h-px w-67 bg-linear-to-r from-transparent via-purple-600 to-transparent" />
+        </div>
+      </section>
+
+      {/* SOBRE MIM */}
+      <section
+        id="sobre"
+        className="max-w-4xl mx-auto px-6 py-24 relative z-10"
+      >
+        <p className="text-[11px] tracking-[3px] uppercase text-violet-600 font-semibold mb-3">
+          Quem sou eu
+        </p>
+        <h2 className="text-4xl font-bold text-purple-100 mb-12 tracking-tight">
+          Sobre <span className="text-purple-500">Mim</span>
+        </h2>
+
+        <div className="flex flex-col md:flex-row gap-12 items-center">
+          {/* TEXTO */}
+          <div className="flex-1 flex flex-col gap-5">
+            <p className="text-purple-300/80 text-sm leading-relaxed">
+              Estudante de Ciência da Computação na UNIVAP e técnico em
+              Informática, com foco em desenvolvimento de software e aplicações
+              web. Possuo experiência no desenvolvimento Full-Stack JavaScript,
+              utilizando React, Node.js, Express.js e Tailwind CSS, além de
+              conhecimento em Python, C, C#, Java e Kotlin.
+            </p>
+            <p className="text-purple-300/80 text-sm leading-relaxed">
+              Tenho experiência na construção de APIs REST, integração entre
+              front-end e back-end, manipulação de dados e modelagem de bancos
+              de dados relacionais e não relacionais, utilizando MySQL e
+              MongoDB. Também utilizo ferramentas como Git/GitHub e sigo boas
+              práticas de arquitetura cliente-servidor e organização de código.
+            </p>
+            <p className="text-purple-300/80 text-sm leading-relaxed">
+              Como projeto de destaque, desenvolvi um Sistema de Emissão de
+              Notas de Despesas em Python, com interface gráfica utilizando
+              CustomTkinter e banco de dados MySQL, focado na automação de
+              processos administrativos. Busco oportunidades para aplicar e
+              expandir meus conhecimentos em desenvolvimento de software e
+              tecnologia.
+            </p>
+          </div>
+
+          {/* FOTO */}
+          <div className="shrink-0 relative flex items-center justify-center">
+            {/* Ondas irradiando (mesmas do hero, adaptadas para retângulo) */}
+            <div className="absolute w-56 h-72 md:w-64 md:h-80 rounded-2xl border border-purple-500/30 animate-[wave_3.5s_ease-out_infinite]" />
+            <div className="absolute w-56 h-72 md:w-64 md:h-80 rounded-2xl border border-purple-500/20 animate-[wave_3.5s_0.8s_ease-out_infinite]" />
+            <div className="absolute w-56 h-72 md:w-64 md:h-80 rounded-2xl border border-purple-500/10 animate-[wave_3.5s_1.6s_ease-out_infinite]" />
+
+            {/* Brilho atrás */}
+            <div className="absolute inset-0 bg-purple-600/10 blur-2xl rounded-2xl" />
+
+            {/* Foto */}
+            <div className="relative w-56 h-72 md:w-64 md:h-80 rounded-2xl overflow-hidden border border-purple-800/40 shadow-2xl shadow-purple-900/50 z-10">
+              <img
+                src="/rafael2.JPG"
+                alt="Rafael Lopes Bonfim"
+                className="w-full h-full object-cover"
+              />
+            </div>
+
+            {/* Brilho embaixo */}
+            <div className="absolute -bottom-4 w-40 h-6 bg-purple-600/30 blur-xl rounded-full" />
+          </div>
+        </div>
+      </section>
+
+      {/* COMPETÊNCIAS */}
+      <section
+        id="competências"
+        className="max-w-4xl mx-auto px-6 py-24 relative z-10"
+      >
+        <p className="text-[11px] tracking-[3px] uppercase text-violet-600 font-semibold mb-3">
+          O que eu sei fazer
+        </p>
+        <h2 className="text-4xl font-bold text-purple-100 mb-12 tracking-tight">
+          Minhas <span className="text-purple-500">Competências</span>
+        </h2>
+        <div className="flex flex-col gap-8">
+          {skillBlocks.map((block) => (
+            <div
+              key={block.title}
+              className="bg-purple-950/10 border border-purple-900/30 rounded-2xl p-6 backdrop-blur-sm"
+            >
+              <h3 className="text-base font-semibold text-purple-300 mb-5 flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-purple-500 inline-block" />
+                {block.title}
+              </h3>
+              <div className="flex flex-col gap-5">
+                {block.subsections.map((sub, i) => (
+                  <div key={i}>
+                    {sub.label && (
+                      <p className="text-[11px] uppercase tracking-[2px] text-purple-600 font-semibold mb-3 ml-1">
+                        {sub.label}
+                      </p>
+                    )}
+                    <div className="flex flex-wrap gap-3">
+                      {sub.skills.map((skill) => (
+                        <SkillTag
+                          key={skill.name}
+                          icon={skill.icon}
+                          name={skill.name}
+                        />
+                      ))}
+                    </div>
+                    {sub.label === "Front-end" && (
+                      <div className="border-t border-purple-900/40 mt-5" />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* PROJETOS */}
+      <section
+        id="projetos"
+        className="max-w-4xl mx-auto px-6 py-24 relative z-10"
+      >
+        <p className="text-[11px] tracking-[3px] uppercase text-violet-600 font-semibold mb-3">
+          O que eu construí
+        </p>
+        <h2 className="text-4xl font-bold text-purple-100 mb-4 tracking-tight">
+          Meus <span className="text-purple-500">Projetos</span>
+        </h2>
+        <p className="text-purple-300/50 max-w-md leading-relaxed mb-12 text-sm">
+          Projetos reais desenvolvidos para praticar e aprofundar meus
+          conhecimentos.
+        </p>
+        <div className="flex flex-wrap gap-6">
+          {projects.map((project) => (
+            <ProjectCard key={project.id} {...project} />
+          ))}
+        </div>
+      </section>
+
+      {/* CONTATO */}
+      <section
+        id="contato"
+        className="max-w-4xl mx-auto px-6 py-24 text-center relative z-10"
+      >
+        <p className="text-[11px] tracking-[3px] uppercase text-violet-600 font-semibold mb-3">
+          Vamos conversar
+        </p>
+        <h2 className="text-4xl font-bold text-purple-100 mb-4 tracking-tight">
+          Entre em <span className="text-purple-500">Contato</span>
+        </h2>
+        <p className="text-purple-300/50 max-w-sm mx-auto leading-relaxed mb-10 text-sm">
+          Aberto a oportunidades.
+        </p>
+        <div className="flex flex-wrap gap-3 justify-center">
+          <a
+            href="mailto:rafa.lopes.bonfim@gmail.com"
+            className="px-8 py-3 bg-linear-to-r from-violet-700 to-purple-500 text-white rounded-xl font-semibold text-sm shadow-lg shadow-purple-900/50 hover:shadow-purple-700/60 transition-shadow inline-flex items-center gap-2"
+          >
+            <Mail size={16} /> rafa.lopes.bonfim@gmail.com
+          </a>
+          <a
+            href={LINKEDIN}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 border border-purple-700/50 text-purple-400 rounded-xl font-semibold text-sm hover:bg-purple-900/20 transition-colors inline-flex items-center gap-2"
+          >
+            <Linkedin size={16} /> LinkedIn
+          </a>
+          <a
+            href={GITHUB}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 border border-purple-700/50 text-purple-400 rounded-xl font-semibold text-sm hover:bg-purple-900/20 transition-colors inline-flex items-center gap-2"
+          >
+            <Github size={16} /> GitHub
+          </a>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-purple-900/20 py-8 flex items-center justify-center gap-4 relative z-10">
+        <span className="font-bold text-purple-100">
+          <span className="text-purple-500">&lt;/</span>dev
+          <span className="text-purple-500">&gt;</span>
+        </span>
+      </footer>
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/projeto/:id" element={<ProjectDetail />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
