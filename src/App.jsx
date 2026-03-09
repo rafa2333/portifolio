@@ -623,7 +623,7 @@ function Home() {
               Informática, com foco em desenvolvimento de software e aplicações
               web. Possuo experiência no desenvolvimento Full-Stack JavaScript,
               utilizando React, Node.js, Express.js e Tailwind CSS, além de
-              conhecimento em Python, C, C#, Java e Kotlin.
+              conhecimento em Python, C#, Java e Kotlin.
             </p>
             <p className="text-purple-300/80 text-sm leading-relaxed">
               Tenho experiência na construção de APIs REST, integração entre
